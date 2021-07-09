@@ -11,6 +11,7 @@ class his_cip:
             key = key%26
             plaintext = plaintext.replace(".","").lower()
             for letter in plaintext:
+                #if there is a space
                 if ord(letter)==32:
                     ciphertext += letter
                 elif ord(letter)>=48 and ord(letter)<=57:
@@ -38,11 +39,23 @@ class his_cip:
                     c=(((ord(letter)%97)-key))+97
                     plaintext += chr(c)
         return plaintext
-
+        
+    def vigenere_enc(self,plaintext,key):
+            lenPlaintext = len(plaintext)
+            lenKey = len(key)
+            x = int(lenPlaintext/lenKey)
+            keymatched = (key*(x+1))[0:(lenPlaintext)]
+            cipherText = ""
+            for x in range(len(keymatched)):
+                letterPlain = plaintext[x]
+                letterKey = keymatched[x]
+                cipherletter = self.caesar_enc(letterPlain,ord(letterKey)%26)
+                cipherText += cipherletter
+            return cipherText
+#%%
 a=his_cip()
-plain="12abc def"
-key=1
-cipher = a.caesar_enc(plain,key)
-a.caesar_dec(cipher,key)
-
+plain="attackatdawn"
+key="lemon"
+keymatch = [key[letter] for letter in range(len(plain))]
+keymatch
 # %%
