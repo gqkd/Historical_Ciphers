@@ -41,7 +41,10 @@ def rotate(rotors):
         beta += 1
     elif beta % 26 == 0 and beta != 0:
         beta = 0
-
+    if gamma % 17 == 0 and gamma != 0:
+        gamma += 1
+    elif gamma % 26 == 0 and gamma != 0:
+        gamma = 0
     rotors = [gamma, beta, alpha]
     print("dopo la rotazione:")
     print(rotors)
