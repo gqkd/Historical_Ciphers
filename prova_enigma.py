@@ -4,6 +4,8 @@ from string import ascii_lowercase
 #%%
 #creation of the list of the alphabet
 alphabet = list(ascii_lowercase)
+rotor_I_conf = {"q":"jgdqoxuscamifrvtpnewkblzyh"}
+
 
 #settings of enigma
 steckerbrett = {" ":" ","b":"a","e":"z"}
@@ -21,10 +23,32 @@ rotors = [alpha, beta, gamma]
 #grund and ring stellung
 grundstellung = ["a","a","a"]
 
-def rotate(rotors, rotor_to_rotate):
-    #rotors, the list with the all the positions
-    #rotor_to_rotate, which one to rotate 0,1,2
-    actualpos = rotors[rotor_to_rotate]
+def rotate(rotors):
+    gamma = rotors[0]
+    beta = rotors[1]
+    alpha = rotors[2]
+    rotors_alph = [alphabet[gamma],alphabet[beta],alphabet[alpha]]
+    print("prima della rotazione:")
+    print(rotors)
+    print(rotors_alph)
+    alpha += 1
+    if alpha % 17 == 0 and alpha != 0:
+        beta += 1
+    elif alpha % 26 == 0 and alpha != 0:
+        alpha = 0
+    if beta % 17 == 0 and beta != 0:
+        gamma += 1
+        beta += 1
+    elif beta % 26 == 0 and beta != 0:
+        beta = 0
+
+    rotors = [gamma, beta, alpha]
+    print("dopo la rotazione:")
+    print(rotors)
+    rotors_alph = [alphabet[gamma],alphabet[beta],alphabet[alpha]]
+    print(rotors_alph,'\n')
+    return rotors
+
 
 def rotate_first_rotor(rotors):
     alpha = rotors[0]
@@ -70,4 +94,12 @@ def en_stage1(steckerbrett,letter):
         return steckerbrett[letter]
 
 
+# %%
+gamma = 0
+beta = 15
+alpha = 15
+rotors = [gamma, beta, alpha]
+
+for i in range(0,10):
+    rotors = rotate(rotors)
 # %%
