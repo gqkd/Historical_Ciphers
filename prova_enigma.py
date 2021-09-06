@@ -4,6 +4,7 @@ from string import ascii_lowercase
 #%%
 #creation of the list of the alphabet
 alphabet = list(ascii_lowercase)
+#configuration of rotors, the key is the notch position
 rotor_I_conf = {"q":"jgdqoxuscamifrvtpnewkblzyh"}
 
 
@@ -13,96 +14,82 @@ steckerbrett = {" ":" ","b":"a","e":"z"}
 for value in range(len(list(steckerbrett.values()))):
     steckerbrett[list(steckerbrett.values())[value]]=list(steckerbrett.keys())[value]
 
-#let's call the K of rotors alpha, beta, gamma
-# this is the initial position of the rotors
-alpha = 5 
-beta = 17
-gamma = 24
-rotors = [alpha, beta, gamma]
-
 #grund and ring stellung
 grundstellung = ["a","a","a"]
 
 def rotate(rotors):
-    gamma = rotors[0]
-    beta = rotors[1]
-    alpha = rotors[2]
-    rotors_alph = [alphabet[gamma],alphabet[beta],alphabet[alpha]]
-    print("prima della rotazione:")
+    slow = rotors[0]
+    middle = rotors[1]
+    fast = rotors[2]
+    rotors_alph = [alphabet[slow],alphabet[middle],alphabet[fast]]
+    rotors = [slow, middle, fast]
     print(rotors)
     print(rotors_alph)
-    alpha += 1
-    if alpha % 17 == 0 and alpha != 0:
-        beta += 1
-    elif alpha % 26 == 0 and alpha != 0:
-        alpha = 0
-    if beta % 17 == 0 and beta != 0:
-        gamma += 1
-        beta += 1
-    elif beta % 26 == 0 and beta != 0:
-        beta = 0
-    if gamma % 17 == 0 and gamma != 0:
-        gamma += 1
-    elif gamma % 26 == 0 and gamma != 0:
-        gamma = 0
-    rotors = [gamma, beta, alpha]
-    print("dopo la rotazione:")
-    print(rotors)
-    rotors_alph = [alphabet[gamma],alphabet[beta],alphabet[alpha]]
-    print(rotors_alph,'\n')
+
+    #if the 1st rotor is in notch rotate the 2nd
+    if fast % 16 == 0 and fast != 0:
+        fast += 1
+        middle += 1
+        rotors = print_rotors(fast, middle, slow)
+        return rotors
+ 
+    #if the 2nd rotor is in notch rotate the 2nd & the 3rd
+    elif middle % 16 == 0 and middle != 0:
+        fast += 1
+        slow += 1
+        middle += 1
+        rotors = print_rotors(fast, middle, slow)
+        return rotors
+    else:
+        fast +=1    
+
+    #reset rotor
+    if fast == 26:
+        fast = 0
+    if middle == 26:
+        middle = 0
+    if slow == 26:
+        slow = 0   
+    rotors = [slow, middle, fast]
+    # print(rotors)
+    # rotors_alph = [alphabet[slow],alphabet[middle],alphabet[fast]]
+    # print(rotors_alph,'\n')
     return rotors
 
-
-def rotate_first_rotor(rotors):
-    alpha = rotors[0]
-    beta = rotors[1]
-    gamma = rotors[2]
-
-    # alpha += 1
-    # if alpha % 26 == 0:
-    #   beta += 1
-    #   alpha = 0
-    # if beta % 26 == 0 and alpha % 26 != 0 and beta >= 25:
-    #   gamma += 1
-    #   beta += 1
-
-    #il codice sopra va, però non considera quando gamma arriva a notch
-    #il codice sotto non va, è quello che ho scritto io, bisogna implementare
-    # la rotazione del secondo e del terzo contemporaneamente
-    alpha = 0
-    beta = 0
-    gamma = 25
-    rotors = [alpha, beta, gamma]
-    print(alpha, beta, gamma)
-    gamma += 1
-    print(alpha, beta, gamma)
-    if alpha % 26 == 0 and alpha != 0:
-        beta += 1
-        alpha = 0
-    if beta % 26 == 0 and beta != 0:
-        gamma += 1
-        beta = 0
-    if gamma % 26 == 0 and gamma != 0:
-        alpha += 1
-        gamma = 0
-    rotors = [alpha, beta, gamma]
+def print_rotors(fast, middle, slow):
+    rotors = [slow, middle, fast]
     print(rotors)
+    rotors_alph = [alphabet[slow],alphabet[middle],alphabet[fast]]
+    print(rotors_alph,'\n')
+    return rotors
 
 def en_stage2(grundstellung, ringstellung, letter):
     #grundstellung
     pass
+
 #steckerbrett encryption
 def en_stage1(steckerbrett,letter):
     if letter in list(steckerbrett.keys()):
         return steckerbrett[letter]
 
+def shift(plaintext,key):
+    ciphertext = ""
+    alphabet = list(ascii_lowercase)*2
+    key = key % 26
+    ciphertext += alphabet[alphabet.index(plaintext)+key]
+    return ciphertext
 
+def encrypt(letter, rotors):
+    rotors = rotate(rotors)
+    for rotor in rotors:
+        pass
+        
 # %%
-gamma = 0
-beta = 15
-alpha = 15
-rotors = [gamma, beta, alpha]
+slow = 0
+middle = 0
+fast = 0
+rotors = [slow, middle, fast]
 
-for i in range(0,10):
+for i in range(0,100):
     rotors = rotate(rotors)
 # %%
