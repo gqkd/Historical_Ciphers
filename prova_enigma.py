@@ -72,24 +72,25 @@ def en_stage1(steckerbrett,letter):
     if letter in list(steckerbrett.keys()):
         return steckerbrett[letter]
 
-def shift(plaintext,key):
+def shift(plaintext,key,alphabet):
     ciphertext = ""
-    alphabet = list(ascii_lowercase)*2
+    alphabet = alphabet*2
+    print(alphabet,alphabet.index(plaintext)+key,alphabet[alphabet.index(plaintext)+key])
     key = key % 26
     ciphertext += alphabet[alphabet.index(plaintext)+key]
     return ciphertext
 
-def encrypt(letter, rotors):
+def encrypt(letter, rotors, rotor_conf):
     rotors = rotate(rotors)
     for rotor in rotors:
-        pass
-        
+        cipher_letter = shift(letter,rotor,list(rotor_conf.values())[0])
+        print(rotor)
+        print(cipher_letter)
 # %%
 slow = 0
 middle = 0
 fast = 0
 rotors = [slow, middle, fast]
 
-for i in range(0,100):
-    rotors = rotate(rotors)
+encrypt('a',rotors,rotor_I_conf)
 # %%
