@@ -115,82 +115,99 @@ def shift(plaintext,rotors,rot_alphabet):
     return plaintext
 
 def shift2(plain,rotors,rot_alphabet,ref_alphabet):
+    #like the wiring diagram of the original machine, there are two passages
+    #first passage is from fast rotor to slow, reverse the rotors for simplicity
     rotors_inv = rotors[::-1]
+
+    #find the index of the first letter, the input
     index_input = alphabet.index(plain)
-    print(f"index_input {plain} {index_input}")
+    # print(f"index_input {plain} {index_input}")
+    
+    #for all rotors, starting from the fast to the slow, there are steps on the normal
+    # alphabet and steps on the rotor alphabet:
+    # - in this first step we look for the index of the input into the rotor alphabet,
+    #   we find the correspondent letter to the index of the input
+    # - find the index of the letter we found into the normal alphabet
+    # - reassing the index of the input to the index of the last letter found and restart
+    #   the cycle
+    #
+    # step1 (rotor_alphabet) index_input -> letter_rotor
+    # step2 (normal_alphabet) letter_rotor -> index_alphabet
+    # step3 index_input=index_alphabet
+
     for rotor_shift in rotors_inv:
         print(f"rotor_shift {rotor_shift}")
-        #alphabet rotor, correspondent letter
-        letter_rotor = rot_alphabet[index_input+rotor_shift]
+        
+        #step1 index_input -> letter_rotor
+        letter_rotor = rot_alphabet[(index_input+rotor_shift)%25]
+
         index_rotor = rot_alphabet.index(letter_rotor)
         print(f"letter_rotor: {letter_rotor} index_rotor: {index_rotor}")
-        #alphabet correspondent letter
+        
+        #step2 letter_rotor -> index_alphabet
         index_alphabet = alphabet.index(letter_rotor)
+
         letter_alphabet = alphabet[index_alphabet]
-        plain = letter_alphabet
-        print(f"plain: {plain} index_alphabet: {index_alphabet}")
+        print(f"letter_alphabet: {letter_alphabet} index_alphabet: {index_alphabet}\n")
+
+        #step3
         index_input = index_alphabet-rotor_shift
     
-    #reflector
+    #reflector, a simple substitution
     letter_reflector = ref_alphabet[index_input]
-    print(f"letter_reflector: {letter_reflector} index_reflector: {index_input}")
-    letter_tmp = letter_reflector
+    index_input = alphabet.index(letter_reflector)
+
+    # print(f"letter_reflector: {letter_reflector} index_reflector: {index_input}\n")
+
+    #now the second passage, from slow to fast
+    # step1 (normal_alphabet) index_input -> letter_alphabet
+    # step2 (rotor_alphabet)  letter_alphabet -> index_rotor
+    # step3 index_input = index_rotor
+
     for rotor_shift in rotors:
         print(f"rotor_shift {rotor_shift}")
-        index_alphabet = alphabet.index(letter_tmp)
-        letter_alphabet = alphabet[index_alphabet]
+
+        #step1 index_input -> letter_alphabet
+        letter_alphabet = alphabet[(index_input+rotor_shift)%25]
+
+        index_alphabet = index_input+rotor_shift
         print(f"letter_alph {letter_alphabet} index_alph {index_alphabet} ")
 
+        # step2 letter_alphabet -> index_rotor
         index_rotor = rot_alphabet.index(letter_alphabet)
-        letter_rotor = rot_alphabet[index_rotor+rotor_shift]
-        print(f"letter_rotor {letter_rotor} index_rotor {index_rotor}")
-        letter_tmp = letter_rotor
-    
+
+        letter_rotor = rot_alphabet[index_rotor]
+        print(f"letter_rotor {letter_rotor} index_rotor {index_rotor}\n")
+
+        #step3
+        index_input = index_rotor-rotor_shift
+        
     #output
-    
-    return alphabet[index_rotor]
+    return alphabet[index_input]
 
 
-def encrypt(letter, rotors, rotor_conf, refl_conf):
-    rotors = rotate(rotors)
+def single_encrypt(letter, rotors, rotor_conf, refl_conf):
     #it returns the shift of the rotors from 1 to 26
-    print(rotors)
-    
+    rotors = rotate(rotors)
     cipher_letter = shift2(letter,rotors,list(rotor_conf.values())[0],list(refl_conf.values())[0])
+    rotors_alph = [alphabet[rotors[0]],alphabet[rotors[1]],alphabet[rotors[2]]]
+    print(rotors,rotors_alph,cipher_letter)
+    return rotors, cipher_letter
 
-    print(rotors,cipher_letter)
-
+def encrypt(stringa, rotors, rotor_conf, refl_conf):
+    ciphertext=""
+    for letter in stringa:
+        rotors, cipher_letter = single_encrypt(letter, rotors, rotor_conf, refl_conf)
+        ciphertext += cipher_letter
+    return ciphertext
 # %%
-slow = 0
+slow = 1
 middle = 0
 fast = 0
 rotors = [slow, middle, fast]
 
-encrypt("a",rotors, rotor_I, ukw_B)
-# plaintext="a"
-# rot_alphabet = list(rotor_I.values())[0]
-# rotors = rotate(rotors)
-# rotor = rotors[2]
-
-# #steps:
-# # 1. if the input is "A", the index is the 0th position, "B" is
-# #    the 1st and so on, let's consider "A" so 0th position
-# # 2. individuate the 0th letter in the rotor alphabet, for
-# #    rotor I the first letter is "E" (with no shift, we have to
-# #    consider the shift, so if the shift is 1 let's consider 
-# #    the 1st position, instead of the 0th)
-# ciphertext = ""
-# alphabet = alphabet*2
-# rot_alphabet = rot_alphabet*2
-# key = rotor % 26
-# print(f"position plain: {alphabet.index(plaintext)}  shift: {key}")
-# tmp=""
-# for i in range(0,len(rot_alphabet)):
-#     tmp += f"{rot_alphabet[i]}{i} "
-# print(tmp)
-
-# print(f"enc: {rot_alphabet[alphabet.index(plaintext)+key]}")
-# ciphertext += rot_alphabet[alphabet.index(plaintext)+key]
+ciphertext = encrypt("aaaaa",rotors, rotor_I, ukw_B)
+print(ciphertext)
 
 
 
